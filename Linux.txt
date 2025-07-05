@@ -10,10 +10,10 @@ function Linux.Create(config)
     screenGui.Parent = playerGui
 
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 200, 0, 400)
-    mainFrame.Position = UDim2.new(0.5, -100, 0.5, -200)
+    mainFrame.Size = config.Size or UDim2.new(0, 200, 0, 250)
+    mainFrame.Position = UDim2.new(0.5, -(config.Size and config.Size.X.Offset or 200)/2, 0.5, -(config.Size and config.Size.Y.Offset or 250)/2)
     mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    mainFrame.BackgroundTransparency = 0.3
+    mainFrame.BackgroundTransparency = 0
     mainFrame.BorderSizePixel = 0
     mainFrame.Active = true
     mainFrame.Draggable = true
@@ -22,9 +22,10 @@ function Linux.Create(config)
     local scrollingFrame = Instance.new("ScrollingFrame")
     scrollingFrame.Size = UDim2.new(1, -10, 1, -40)
     scrollingFrame.Position = UDim2.new(0, 5, 0, 35)
-    scrollingFrame.BackgroundTransparency = 1
+    scrollingFrame.BackgroundTransparency = 0
+    scrollingFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     scrollingFrame.ScrollBarThickness = 4
-    scrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
+    scrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(80, 80, 80)
     scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
     scrollingFrame.Parent = mainFrame
 
@@ -37,7 +38,8 @@ function Linux.Create(config)
     titleLabel.Position = UDim2.new(0, 0, 0, 5)
     titleLabel.Text = config.Name
     titleLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    titleLabel.BackgroundTransparency = 1
+    titleLabel.BackgroundTransparency = 0
+    titleLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     titleLabel.Font = Enum.Font.SourceSansBold
     titleLabel.TextSize = 18
     titleLabel.BorderSizePixel = 0
@@ -58,7 +60,11 @@ function Linux.Create(config)
         button.TextSize = 16
         button.BorderSizePixel = 0
         button.Parent = scrollingFrame
-        button.Activated:Connect(callback)
+        button.Activated:Connect(function()
+            if callback then
+                callback()
+            end
+        end)
         updateCanvasSize()
         return button
     end
@@ -66,7 +72,8 @@ function Linux.Create(config)
     function ui:AddToggle(text, defaultState, callback)
         local toggleFrame = Instance.new("Frame")
         toggleFrame.Size = UDim2.new(1, -10, 0, 30)
-        toggleFrame.BackgroundTransparency = 1
+        toggleFrame.BackgroundTransparency = 0
+        toggleFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         toggleFrame.Parent = scrollingFrame
 
         local toggleLabel = Instance.new("TextLabel")
@@ -83,8 +90,8 @@ function Linux.Create(config)
         toggleButton.Size = UDim2.new(0, 40, 0, 20)
         toggleButton.Position = UDim2.new(1, -45, 0.5, -10)
         toggleButton.Text = defaultState and "ON" or "OFF"
-        toggleButton.BackgroundColor3 = defaultState and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
-        toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        toggleButton.BackgroundColor3 = defaultState and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+        toggleButton.TextColor3 = Color3.fromRGB(200, 200, 200)
         toggleButton.Font = Enum.Font.SourceSans
         toggleButton.TextSize = 14
         toggleButton.BorderSizePixel = 0
@@ -94,8 +101,10 @@ function Linux.Create(config)
         toggleButton.Activated:Connect(function()
             state = not state
             toggleButton.Text = state and "ON" or "OFF"
-            toggleButton.BackgroundColor3 = state and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
-            callback(state)
+            toggleButton.BackgroundColor3 = state and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+            if callback then
+                callback(state)
+            end
         end)
         updateCanvasSize()
         return toggleFrame
@@ -106,8 +115,8 @@ function Linux.Create(config)
         label.Size = UDim2.new(1, -10, 0, 25)
         label.Text = text
         label.TextColor3 = Color3.fromRGB(200, 200, 200)
-        label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        label.BackgroundTransparency = 0.6
+        label.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        label.BackgroundTransparency = 0
         label.Font = Enum.Font.SourceSans
         label.TextSize = 14
         label.BorderSizePixel = 0
